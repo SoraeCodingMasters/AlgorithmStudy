@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <unordered_map>
+#include <vector>
 #include <algorithm>
 using namespace std;
 
@@ -8,9 +8,6 @@ using namespace std;
 #define read_input freopen("input.txt","r",stdin);
 
 #define MAX 100'000
-unordered_map<string, int> map;
-string word[MAX];
-int w_n = 0;
 
 int main() {
 	fastio;
@@ -18,20 +15,23 @@ int main() {
 	int n, m;
 	cin >> n >> m;
 	string tmp;
-	for (int i = 0;i < n; i++) {
-		cin >> tmp;
-		if (tmp.size() < m) continue;
-		if (map[tmp]++ == 0) word[w_n++] = tmp;
-	}
-	int a_n, b_n;
-	sort(word, word + w_n, [&](const string& a, const string& b) {
-		a_n = map[a], b_n = map[b];
-		if (a_n > b_n) return true;
-		else if (a_n == b_n) {
-			if (a.size() > b.size()) return true;
-			if (a.size() == b.size()) return a < b;
-		}
+	vector<string> word(n);
+	for (auto& i : word) cin >> i;
+	sort(word.begin(), word.end(), [&](const string& a, const string& b) {
+		if (a.size() > b.size()) return true;
+		if (a.size() == b.size()) return a < b;
 		return false;
 	});
-	for (int i = 0;i < w_n;i++) cout << word[i] << '\n';
+	vector<pair<int, int>> ans;
+	for (int i = 0;i < n;i++) {
+		if (word[i].size() < m) break;
+		int num = 0;
+		while (i < n-1 && word[i] == word[i + 1]) {
+			num++;
+			i++;
+		}
+		ans.push_back({ -num,i });
+	}
+	sort(ans.begin(), ans.end());
+	for (auto& [_, idx] : ans) cout << word[idx] << '\n';
 }
