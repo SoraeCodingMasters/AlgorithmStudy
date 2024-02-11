@@ -16,35 +16,29 @@ import java.util.StringTokenizer;
 public class Main {
     static int X, N; // 1 <= X <= N <= 250,000
     static int[] visitors;
-    static int[] dp;
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         X = Integer.parseInt(st.nextToken());
 
-        visitors = new int[N];
+        visitors = new int[N + 1];
         st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++) {
-            visitors[i] = Integer.parseInt(st.nextToken());
-        }
 
-        dp = new int[N];
-        for (int i = 0; i < X; i++) {
-            dp[0] += visitors[i];
-        }
-
-        for(int i = 1; i <= N - X; i++) {
-            dp[i] = dp[i - 1] + visitors[i + X - 1] - visitors[i - 1];
+        // 누적 합
+        for (int i = 1; i <= N; i++) {
+            visitors[i] = visitors[i - 1] + Integer.parseInt(st.nextToken());
         }
 
         int count = 0;
         int maxVisitor = Integer.MIN_VALUE;
-        for (int i = 0; i < dp.length; i++) {
-            if (maxVisitor < dp[i]) {
-                maxVisitor = dp[i];
+        for (int i = 0; i <= N - X; i++) {
+            int distance = visitors[i + X] - visitors[i];
+            if (maxVisitor < distance) {
+                maxVisitor = distance;
                 count = 1;
-            } else if (maxVisitor == dp[i]) {
+            } else if (maxVisitor == distance) {
                 count++;
             }
         }
