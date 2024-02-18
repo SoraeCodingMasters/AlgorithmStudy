@@ -1,80 +1,46 @@
 #include <iostream>
 #include <algorithm>
-#include <vector>
+#include <cstring>
 
 #define fastio cin.tie(0);cout.tie(0);ios::sync_with_stdio(false)
 #define read_input freopen("input.txt","r",stdin)
 using namespace std;
 
-struct node {
-	node* prev;
-	node* next;
-	char c;
-};
+#define LMAX 600'000
+#define RMAX 500'000
 
-node node_pool[600'000 + 5];
-int node_num = 0;
-node* get_new_node() {
-	return &node_pool[node_num++];
-}
+char lstack[LMAX], rstack[RMAX];
+int lidx, ridx;
 
-node* insert(char c, node* target) {
-	auto new_node = get_new_node();
-	new_node->c = c;
-	new_node->next = target->next, new_node->prev = target;
-	target->next->prev = new_node;
-	target->next = new_node;
-	return new_node;
-}
-
-void del(node* target) {
-	target->prev->next = target->next;
-	target->next->prev = target->prev;
-}
-
-string str;
 int main() {
 	fastio;
 	//read_input;
-	cin >> str;
-	node* head = get_new_node();
-	node* tail = get_new_node();
-	head->next = tail, head->prev = tail;
-	tail->next = head, tail->prev = head;
-
-	node* cur = head;
-	for (auto& c : str) {
-		cur=insert(c, cur);
-	}
+	cin >> lstack;
 	int m;
-	char cmd, c;
 	cin >> m;
-	cur = tail;
-	for (int i = 0;i < m;i++) {
+	lidx = strlen(lstack) - 1;
+	ridx = -1;
+
+	char cmd, x;
+	while (m--) {
 		cin >> cmd;
-		switch (cmd)
-		{
-		case'L':
-			if (cur->prev == head) break;
-			cur = cur->prev;
-			break;
-		case'D':
-			if (cur == tail) break;
-			cur = cur->next;
-			break;
-		case'B':
-			if (cur->prev == head) break;
-			del(cur->prev);
-			break;
-		case'P':
-			cin >> c;
-			insert(c, cur->prev);
-			break;
+		if (cmd == 'L') {
+			if (lidx < 0) continue;
+			rstack[++ridx] = lstack[lidx--];
+		}
+		else if (cmd == 'D') {
+			if (ridx < 0) continue;
+			lstack[++lidx] = rstack[ridx--];
+		}
+		else if (cmd == 'B') {
+			if (lidx < 0) continue;
+			lidx--;
+		}
+		else {
+			cin >> x;
+			lstack[++lidx] = x;
 		}
 	}
-	cur = head->next;
-	while (cur != tail) {
-		cout << cur->c;
-		cur = cur->next;
-	}
+	for (int i = 0;i <= lidx;i++) cout << lstack[i];
+	for (int i = ridx;i >=0;i--) cout << rstack[i];
 }
