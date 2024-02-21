@@ -12,7 +12,6 @@ typedef pair<int, int> pii;
 #define MAX 1000
 int n, m;
 int g[MAX][MAX];
-int dist[MAX][MAX];
 int dy[4]{ 0,0,1,-1 }, dx[4]{ 1,-1,0,0 };
 const int INF = 987654321;
 int main() {
@@ -24,24 +23,29 @@ int main() {
 		cin >> g[i][j];
 		if (g[i][j] == 2) sy = i, sx = j;
 	}
-	queue<pii> q;
-	dist[sy][sx] = 1;
-	q.push({sy,sx});
+	for (int i = 0;i < n;i++) for (int j = 0;j < m;j++) {
+		if (g[i][j] == 1)g[i][j] = -1;
+		else g[i][j] = 0;
+	}
+	g[sy][sx] = 1;
+	queue<pair<int, int>> q;
+	q.push({ sy,sx });
 	while (!q.empty()) {
 		auto [cy, cx] = q.front();
 		q.pop();
-
+		
 		for (int d = 0;d < 4;d++) {
 			int ny = cy + dy[d], nx = cx + dx[d];
-			if (ny < 0 || ny >= n || nx < 0 || nx >= m || g[ny][nx]==0 || dist[ny][nx]>0) continue;
-			dist[ny][nx] = dist[cy][cx] + 1;
+			if (ny < 0 || ny >= n || nx < 0 || nx >= m || g[ny][nx] >= 0) continue;
+			g[ny][nx] = g[cy][cx] + 1;
 			q.push({ ny,nx });
 		}
 	}
 	for (int i = 0;i < n;i++) {
 		for (int j = 0;j < m;j++) {
-			if (!dist[i][j]) cout << (g[i][j] == 0 ? 0 : -1) << ' ';
-			else cout << dist[i][j]-1 << ' ';
+			if (g[i][j] >= 1) cout << g[i][j] - 1;
+			else cout << g[i][j];
+			cout << ' ';
 		}
 		cout << '\n';
 	}
