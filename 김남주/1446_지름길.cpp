@@ -8,52 +8,36 @@
 #define read_input freopen("input.txt","r",stdin)
 using namespace std;
 
-typedef pair<int,int> pii;
-const int INF=1e9;
+typedef tuple<int,int,int> tup;
 
 #define MAX 10'000
-vector<pii> g[MAX+1];
-int dist[MAX+1];
 int n,d;
+int dp[MAX+1];
+tup roads[12];
 
 int main() {
     fastio;
     // read_input;
+
     cin>>n>>d;
 
-    int a,b,c;
-    set<int,greater<int>> nodeset;
+    int s,e,c;
     for (int i=0;i<n;i++) {
-        cin>>a>>b>>c;
-        g[a].push_back({c,b});
-        nodeset.insert(a);
+        cin>>s>>e>>c;
+        roads[i]={e,s,c};
     }
-    nodeset.insert(d);
-
-    fill(&dist[0],&dist[MAX+1],INF);
-    priority_queue<pii,vector<pii>,greater<pii>> pq;
-    dist[0]=0;
-    pq.push({0,0});
-    while(!pq.empty()) {
-        auto [cc,cp]=pq.top();
-        pq.pop();
-        if (cc>dist[cp]) continue;
-        if (cp==d) {
-            cout<<cc;
-            return 0;
+    sort(roads,roads+n);
+    for (int i=0;i<=d;i++) dp[i]=i;
+    for (auto& [e,s,c]:roads) {
+        if(e>d) break;
+        for (int i=0;i<n;i++) {
+            int ce=get<0>(roads[i]);
+            if (ce>s) break;
+            dp[s]=min(dp[s],dp[ce]+s-ce);
         }
-
-        for (auto& next: nodeset) {
-            if (next<cp) break;
-            if (dist[next]<=cc+next-cp) continue;
-            dist[next]=cc+next-cp;
-            pq.push({dist[next],next});
-        }
-
-        for (auto& [nc,np]:g[cp]) {
-            if (dist[np]<=cc+nc || np>d) continue;
-            dist[np]=cc+nc;
-            pq.push({dist[np],np});
-        }
+        dp[e]=min(dp[e],dp[s]+c);
+        dp[d]=min(dp[d],dp[e]+d-e);
     }
+    
+    cout<<dp[d];
 }
