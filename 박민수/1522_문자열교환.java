@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 
 public class Main {
     static char[] input;
-    static int a, b;
+    static int a;
     static int len;
     static int total = Integer.MAX_VALUE;
     public static void main(String[] args) throws IOException {
@@ -22,47 +22,19 @@ public class Main {
         input = br.readLine().toCharArray();
         len = input.length;
 
+        // a의 개수 세기
         for (int i = 0; i < len; i++) {
             if (input[i] == 'a') a++;
-            else b++;
         }
 
-        int la, ra, lb, rb;
         int l = 0;
         while(l < len) {
-            la = ra = lb = rb = 0;
-            // a를 왼쪽으로 몰기
-            for (int i = l; i < l + len; i++) {
-                if (input[i % len] == 'a') la++;
-                else break;
+            int b = 0;
+            // a 범위 내에서 교환할 b 개수 찾기
+            for (int i = l; i < l + a; i++) {
+                if (input[i % len] == 'b') b++;
             }
-            la = a - la;
-            total = Math.min(total, la);
-
-            // a를 오른쪽으로 몰기
-            for (int i = l + len - 1; i >= l; i--) {
-                if (input[i % len] == 'a') ra++;
-                else break;
-            }
-            ra = a - ra;
-            total = Math.min(total, la);
-
-            // b를 왼쪽으로 몰기
-            for (int i = l; i < l + len; i++) {
-                if (input[i % len] == 'b') lb++;
-                else break;
-            }
-            lb = b - lb;
-            total = Math.min(total, lb);
-
-            // a를 오른쪽으로 몰기
-            for (int i = l + len - 1; i >= l; i--) {
-                if (input[i % len] == 'b') rb++;
-                else break;
-            }
-            rb = b - rb;
-            total = Math.min(total, rb);
-
+            total = Math.min(total, b);
             l++;
         }
 
