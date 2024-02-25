@@ -18,44 +18,33 @@ import java.util.Queue;
  */
 
 public class Main {
-    static String S, T; // 1 <= S의 길이 <= 49 / 2 <= T의 길이 <= 50
-    static int ta, tb;
-    static int sa, sb;
-    static Queue<String> q = new LinkedList<>();
+    static String S; // 1 <= S의 길이 <= 49 / 2 <= T의 길이 <= 50
+    static boolean find;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         S = br.readLine();
-        T = br.readLine();
+        String T = br.readLine();
 
-        for (int i = 0; i < T.length(); i++) {
-            if (T.charAt(i) == 'A') ta++;
-            else tb++;
+        dfs(T);
+        if (find) System.out.println(1);
+        else System.out.println(0);
+    }
+
+    public static void dfs(String target) {
+
+        if (target.length() < S.length()) return;
+
+        if (S.equals(target)) find = true;
+
+        // 맨뒤에 A가 있을 때
+        if (target.charAt(target.length() - 1) == 'A') {
+           dfs(new StringBuilder().append(target, 0, target.length() - 1).toString());
         }
-
-        q.add(S);
-        while(!q.isEmpty()) {
-            String w = q.poll();
-
-            if (w.equals(T)) {
-                System.out.println(1);
-                return;
-            }
-
-            int wa = 0;
-            int wb = 0;
-            for (int i = 0; i < w.length(); i++) {
-                if (w.charAt(i) == 'A') wa++;
-                else wb++;
-            }
-
-            if (wa + wb < ta + tb) {
-                if (wa < ta) q.add(new StringBuilder().append(w).append("A").toString());
-                if (wb < tb) q.add(new StringBuilder().append(w).append("B").reverse().toString());
-            }
+        // 맨앞에 B가 있을 때
+        if (target.charAt(0) == 'B') {
+           dfs(new StringBuilder().append(target.substring(1)).reverse().toString());
         }
-
-        System.out.println(0);
     }
 
 }
