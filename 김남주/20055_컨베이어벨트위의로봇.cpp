@@ -7,7 +7,7 @@ using namespace std;
 
 int n,k;
 int hp[201];
-int num[201];
+bool num[201];
 
 int main() {
     fastio;
@@ -20,6 +20,7 @@ int main() {
     
     int ans=1;
     int up_pos=0,down_pos=n-1;
+    int cur_k=0;
     while (true) {
         up_pos=up_pos?(up_pos-1):(2*n-1);
         down_pos=down_pos?(down_pos-1):(2*n-1);
@@ -29,19 +30,19 @@ int main() {
             if (idx>=(int)robot_pos.size()) break;
             auto& p=robot_pos[idx];
             if (p==down_pos) {
-                num[p]--;
+                num[p]=false;
                 robot_pos.pop_front();
                 continue;
             }
             int next_pos=(p+1)%(2*n);
             if (num[next_pos]==0 && hp[next_pos]>0) {
-                num[p]--;
-                hp[next_pos]--;
-                num[next_pos]++;
+                num[p]=false;
+                if(--hp[next_pos]==0) cur_k++;
+                num[next_pos]=true;
                 p=next_pos;
             }
             if (p==down_pos) {
-                num[p]--;
+                num[p]=false;
                 robot_pos.pop_front();
                 continue;
             }
@@ -49,12 +50,8 @@ int main() {
         }
         if (hp[up_pos]>0) {
             robot_pos.push_back(up_pos);
-            num[up_pos]++;
-            hp[up_pos]--;
-        }
-        int cur_k=0;
-        for (int i=0;i<2*n;i++) {
-            if (!hp[i]) cur_k++;
+            num[up_pos]=true;
+            if(--hp[up_pos]==0)cur_k++;
         }
         if (cur_k>=k) break;
         ans++;
