@@ -34,7 +34,7 @@ int main() {
                 robot_pos.pop_front();
                 continue;
             }
-            int next_pos=(p+1)%(2*n);
+            int next_pos=p==2*n-1?0:p+1;
             if (num[next_pos]==0 && hp[next_pos]>0) {
                 num[p]=false;
                 if(--hp[next_pos]==0) cur_k++;
