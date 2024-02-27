@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /***
  * 백준 20437번
@@ -49,18 +51,18 @@ public class Main {
                     }
                 }
 
+                Queue<Integer> index = new LinkedList<>();
                 // 3, 4번 값 구하기
                 while (++r < W.length()) {
-                    if (W.charAt(r) - 'a' == i) count++;
-
+                    if (W.charAt(r) - 'a' == i) {
+                        index.add(r);
+                        count++;
+                    }
                     if (K == count) {
                         maxValue = Math.max(maxValue, r - l + 1);
                         minValue = Math.min(minValue, r - l + 1);
 
-                        for (int k = l; k <= r; k++) {
-                            if (W.charAt(++l) - 'a' == i) break;
-                        }
-
+                        l = index.poll();
                         count--;
                     }
                 }
