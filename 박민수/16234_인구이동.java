@@ -27,7 +27,7 @@ public class Main {
     static int[][] lands;
     static boolean[][] visited;
     static int day = 0;
-    static List<List<Location>> unions;
+    static List<Location> union;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -50,31 +50,20 @@ public class Main {
             // 매 회차당 초기화
             boolean stop = true;
             visited = new boolean[N][N];
-            unions = new ArrayList<>();
-
             // 연합 만들기
             for (int x = 0; x < N; x++) {
                 for (int y = 0; y < N; y++) {
                     if (!visited[x][y]) {
-                        bfs(x, y);
-                    }
-                }
-            }
+                        int sum = bfs(x, y);
 
-            for (List<Location> union : unions) {
-                if (union.size() > 1) {
-                    stop = false;
-
-                    // 연합 인구 계산
-                    int total = 0;
-                    for (Location l : union) {
-                        total += lands[l.x][l.y];
-                    }
-                    int people = total / union.size();
-
-                    // 연합 인구 이동
-                    for (Location l : union) {
-                        lands[l.x][l.y] = people;
+                        if (union.size() > 1) {
+                            stop = false;
+                            int people = sum / union.size();
+                            // 연합 인구 이동
+                            for (Location l : union) {
+                                lands[l.x][l.y] = people;
+                            }
+                        }
                     }
                 }
             }
@@ -87,14 +76,15 @@ public class Main {
 
         System.out.println(day);
     }
-    public static void bfs(int x, int y) {
-        unions.add(new ArrayList<>());
-        unions.get(unions.size() - 1).add(new Location(x, y));
+    public static int bfs(int x, int y) {
+        union = new ArrayList<>();
+        union.add(new Location(x, y));
 
         Queue<Location> q = new LinkedList<>();
         q.add(new Location(x, y));
         visited[x][y] = true;
 
+        int sum = lands[x][y];
         while(!q.isEmpty()) {
             Location l = q.poll();
 
@@ -107,14 +97,15 @@ public class Main {
 
                     if (L <= diff && diff <= R) {
                         visited[nx][ny] = true;
+                        sum += lands[nx][ny];
                         q.add(new Location(nx, ny));
-                        unions.get(unions.size() - 1).add(new Location(nx, ny));
+                        union.add(new Location(nx, ny));
                     }
                 }
             }
         }
 
-
+        return sum;
     }
 
     public static boolean check(int x, int y) {
