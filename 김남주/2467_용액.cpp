@@ -21,7 +21,8 @@ int main() {
 			a1 = a[l], a2 = a[r];
 		}
 		if (x < 0) l++;
-		else r--;
+		else if (x>0) r--;
+		else break;
 	}
 	cout << a1 << ' ' << a2;
 }
