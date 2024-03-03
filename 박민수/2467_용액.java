@@ -28,31 +28,26 @@ public class Main {
             solutions[i] = Integer.parseInt(st.nextToken());
         }
 
-        int l = 0;
-        int r = N - 1;
         int mix = Integer.MAX_VALUE;
-        while(l < r) {
-            int sum = solutions[l] + solutions[r];
-            int abs = Math.abs(sum);
+        for (int i = 0; i < N - 1; i++) {
+            int l = i + 1;
+            int r = N - 1;
+            while(l <= r) {
+                int mid = (l + r) / 2;
+                int sum = solutions[i] + solutions[mid];
+                int abs = Math.abs(sum);
 
-            if (sum > 0) {
-                if (mix >= abs) {
+                if (mix > abs) {
+                    a = solutions[i];
+                    b = solutions[mid];
                     mix = abs;
-                    a = solutions[l];
-                    b = solutions[r];
                 }
-                r--;
-            } else if (sum == 0) {
-                a = solutions[l];
-                b = solutions[r];
-                break;
-            } else {
-                if (mix >= abs) {
-                    mix = abs;
-                    a = solutions[l];
-                    b = solutions[r];
-                }
-                l++;
+
+                if (sum > 0) {
+                    r = mid - 1;
+                } else if (sum < 0) {
+                    l = mid + 1;
+                } else break;
             }
         }
 
