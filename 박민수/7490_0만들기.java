@@ -3,8 +3,6 @@ package SoraeCodingMasters.A.BOJ7490;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
 
 /***
  * 백준 7490번
@@ -17,7 +15,8 @@ import java.util.Queue;
 public class Main {
     static int T; // 1 <= T <= 10
     static int N; // 3 <= N <= 9
-    static Queue<Formula> q;
+    static int[] numbers;
+    static char[] operator = {' ', '+', '-'};
     static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws IOException {
@@ -26,49 +25,61 @@ public class Main {
 
         while(T-- > 0) {
             N = Integer.parseInt(br.readLine());
-            q = new LinkedList<>();
-            q.add(new Formula(1, String.valueOf(1), 1, 3));
-
-            while(!q.isEmpty()) {
-                Formula f = q.poll();
-
-                if (f.step == N) {
-                    if (f.value == 0) sb.append(f.formula).append("\n");
-                    continue;
-                }
-
-                int next = f.step + 1;
-                int value = f.value;
-
-                // 이전 연산이 뺄셈인 경우
-                if (f.mod == 1) {
-                    value += f.step - (f.step * 10 + next);
-                } else if (f.mod == 2) {
-                    value += -f.step + (f.step * 10 + next);
-                } else if (f.mod == 3) {
-                    value = value * 10 + next;
-                }
-                q.add(new Formula(value, f.formula + " " + next, next, 3));
-                q.add(new Formula(f.value + next, f.formula + "+" + next, next, 2));
-                q.add(new Formula(f.value - next, f.formula + "-" + next, next, 1));
-            }
+            numbers = new int[N];
+            dfs(new int[N - 1], 0);
             sb.append("\n");
         }
 
         System.out.println(sb);
     }
 
-    public static class Formula {
-        int value;
-        String formula;
-        int step;
-        int mod;
-
-        public Formula(int value, String formula, int step, int mod) {
-            this.value = value;
-            this.formula = formula;
-            this.step = step;
-            this.mod = mod;
+    public static void dfs(int[] op, int depth) {
+        if (depth >= op.length) {
+            if (calculate(op) == 0) {
+                makeString(op);
+            }
+            return ;
         }
+
+        for (int i = 0; i < operator.length; i++) {
+            op[depth] = i;
+            dfs(op, depth + 1);
+        }
+    }
+
+    public static int calculate(int[] op) {
+        int top = -1;
+        numbers[++top] = 1;
+
+        int step = 2;
+        for (int o : op) {
+            if (o == 1) {
+                numbers[++top] = step;
+            } else if (o == 2) {
+                numbers[++top] = -step;
+            } else {
+                numbers[top] *= 10;
+                numbers[top] += (numbers[top] >= 0) ? step : -step;
+            }
+
+            step++;
+        }
+
+        int sum = 0;
+        for (int i = 0; i <= top; i++){
+            sum += numbers[i];
+        }
+
+        return sum;
+    }
+
+    public static void makeString(int[] op) {
+        int n = 1;
+        sb.append(n);
+        for (int i : op) {
+            sb.append(operator[i]).append(++n);
+        }
+
+        sb.append("\n");
     }
 }
