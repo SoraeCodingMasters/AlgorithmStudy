@@ -32,33 +32,33 @@ public class Main {
             }
 
             map = new int[N][N];
+            visited = new boolean[N][N];
             dist = new int[N][N];
 
             for (int i = 0; i < N; i++) {
                 st = new StringTokenizer(br.readLine());
                 for (int j = 0 ; j < N; j++) {
                     map[i][j] = Integer.parseInt(st.nextToken());
-                    dist[i][j] = Integer.MAX_VALUE;
                 }
             }
 
-            dijkstra(0, 0);
+            for (int i = 0; i < N; i++) {
+                Arrays.fill(dist[i], Integer.MAX_VALUE);
+            }
+
+            bfs(0, 0);
             sb.append("Problem ").append(time++).append(": ").append(dist[N - 1][N - 1]).append("\n");
         }
         System.out.println(sb);
     }
 
-    public static void dijkstra(int x, int y) {
-        PriorityQueue<Location> pq = new PriorityQueue<>((a, b) -> a.val - b.val);
-        pq.add(new Location(x, y, map[x][y]));
+    public static void bfs(int x, int y) {
+        Queue<Location> q = new LinkedList<>();
+        q.add(new Location(x, y));
         dist[x][y] = map[x][y];
 
-        while(!pq.isEmpty()) {
-            Location l = pq.poll();
-
-            if (l.x == N - 1 && l.y == N - 1) break;
-
-            if (dist[l.x][l.y] < l.val) continue;
+        while (!q.isEmpty()) {
+            Location l = q.poll();
 
             for (int[] d : dir) {
                 int nx = l.x + d[0];
@@ -66,11 +66,10 @@ public class Main {
 
                 if (check(nx, ny) && dist[nx][ny] > dist[l.x][l.y] + map[nx][ny]) {
                     dist[nx][ny] = dist[l.x][l.y] + map[nx][ny];
-                    pq.add(new Location(nx, ny, dist[nx][ny]));
+                    q.add(new Location(nx, ny));
                 }
             }
         }
-
     }
 
     public static boolean check(int x, int y) {
@@ -81,12 +80,9 @@ public class Main {
         int x;
         int y;
 
-        int val;
-
-        public Location(int x, int y, int val) {
+        public Location(int x, int y) {
             this.x = x;
             this.y = y;
-            this.val = val;
         }
     }
 }
