@@ -9,15 +9,15 @@ import java.util.StringTokenizer;
 
 /***
  * 백준 1806번
- * 부분합
+ * 부분합 (Two Pointer)
  * 2024-03-14
  * 시간 제한 : 0.5초 (java 11 -> 1초)
  * 메모리 제한 : 128MB
  */
 
-public class Main {
+public class TP {
     static int N, S; // 10 <= N <= 100,000 / 0 <= S <= 100,000,000
-    static Deque<Integer> dq;
+    static int[] arr;
     static int cur = 0;
     static int minLen = Integer.MAX_VALUE;
 
@@ -30,25 +30,29 @@ public class Main {
 
         N = Integer.parseInt(st.nextToken());
         S = Integer.parseInt(st.nextToken());
+        arr = new int[N];
 
-        dq = new ArrayDeque<>();
         st = new StringTokenizer(br.readLine());
         for(int i = 0; i < N; i++) {
-            int item = Integer.parseInt(st.nextToken());
-            if (cur + item < S) {
-                cur += item;
-                dq.offerLast(item);
-            } else {
-                cur += item;
-                dq.offerLast(item);
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
 
-                while(!dq.isEmpty() && cur - dq.peekFirst() >= S) {
-                    cur -= dq.pollFirst();
+        int l = 0;
+        int r = 0;
+
+        while(l <= r && r < N) {
+            cur += arr[r++];
+
+            if (cur >= S) {
+                while(cur - arr[l] >= S) {
+                    cur -= arr[l++];
                 }
 
-                minLen = Math.min(minLen, dq.size());
+                minLen = Math.min(minLen, r - l);
             }
+
         }
+
 
         StringBuilder sb = new StringBuilder();
         if (minLen == Integer.MAX_VALUE) sb.append(0);
