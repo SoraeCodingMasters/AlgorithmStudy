@@ -13,12 +13,12 @@ import java.util.StringTokenizer;
  * 메모리 제한 : 256MB
  */
 
-public class Main {
+public class BM {
     static final int[][] dir = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
     static int R, C; // 1 <= R, C <= 20
-    static char[][] map;
-    static boolean[] alphabet;
+    static int[][] map;
     static int ans = Integer.MIN_VALUE;
+    static int bit = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -27,21 +27,22 @@ public class Main {
         R = Integer.parseInt(st.nextToken());
         C = Integer.parseInt(st.nextToken());
 
-        map = new char[R][C];
-        alphabet = new boolean[26];
+        map = new int[R][C];
         for (int i = 0; i < R; i++) {
             char[] input = br.readLine().toCharArray();
             for (int j = 0; j < C; j++) {
-                map[i] = input;
+                map[i][j] = input[j] - 'A';
             }
         }
-        alphabet[map[0][0] - 'A'] = true;
+
+        bit |= (1 << map[0][0]);
         dfs(0, 0, 1);
 
         System.out.println(ans);
     }
 
     public static void dfs(int x, int y, int step) {
+
         ans = Math.max(ans, step);
 
         for (int[] d : dir) {
@@ -49,12 +50,12 @@ public class Main {
             int ny = y + d[1];
 
             if (check(nx, ny)) {
-                int index = map[nx][ny] - 'A';
+                int index = map[nx][ny];
 
-                if (!alphabet[index]) {
-                    alphabet[index] = true;
+                if ((bit & (1 << index)) != (1 << index)) {
+                    bit |= (1 << index);
                     dfs(nx, ny, step + 1);
-                    alphabet[index] = false;
+                    bit &= ~(1 << index);
                 }
             }
         }
@@ -64,16 +65,4 @@ public class Main {
         return 0 <= x && x < R && 0 <= y && y < C;
     }
 
-    public static void print() {
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < R; i++) {
-            for (int j = 0; j < C; j++) {
-                sb.append(map[i][j]).append(" ");
-            }
-            sb.append("\n");
-        }
-
-        System.out.println(sb);
-    }
 }
