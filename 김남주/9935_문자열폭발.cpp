@@ -9,13 +9,13 @@
 using namespace std;
 
 #define MAX 1'000'000
-char str[MAX+1],bomb[37];
+string str,bomb;
 
 int main() {
     fastio;
     // read_input;
     cin>>str>>bomb;
-    int n=strlen(str),m=strlen(bomb);
+    int n=str.size(),m=bomb.size();
     int i=0,e=0;
     for (;e<n;e++) {
         str[i++]=str[e];
@@ -30,6 +30,7 @@ int main() {
         if (flag) continue;
         i=i-m;
     }
-    for (int j=0;j<i;j++) cout<<str[j];
+    str.resize(i);
+    cout<<str;
     if(!i) cout<<"FRULA";
 }
