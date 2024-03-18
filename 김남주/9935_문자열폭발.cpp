@@ -16,26 +16,20 @@ int main() {
     // read_input;
     cin>>str>>bomb;
     int n=strlen(str),m=strlen(bomb);
-    vector<int> stk;
-    bool flag=false;
-    for (int i=0;i<n;i++) {
-        if (str[i]==bomb[0]) stk.push_back(0);
-        else if(!stk.empty()) {
-            if (str[i]==bomb[stk.back()+1]) stk.push_back(stk.back()+1);
-            else {
+    int i=0,e=0;
+    for (;e<n;e++) {
+        str[i++]=str[e];
+        if (i-m<0) continue;
+        bool flag=false;
+        for (int j=0;j<m;j++) {
+            if (str[i-m+j]!=bomb[j]) {
                 flag=true;
-                for (int i=0;i<(int)stk.size();i++) cout<<bomb[stk[i]];
-                stk.clear();
-                cout<<str[i];
+                break;
             }
-        } else cout<<str[i],flag=true;
-        if (!stk.empty() && stk.back()==m-1) {
-            for (int _=0;_<m;_++) stk.pop_back();
         }
+        if (flag) continue;
+        i=i-m;
     }
-    if (!stk.empty()) {
-        for(auto&i:stk)cout<<bomb[i];
-        flag=true;
-    }    
-    if(!flag)cout<<"FRULA";
+    for (int j=0;j<i;j++) cout<<str[j];
+    if(!i) cout<<"FRULA";
 }
