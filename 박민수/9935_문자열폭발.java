@@ -15,47 +15,44 @@ import java.util.Deque;
  */
 
 public class Main {
-    static Deque<Character> dq = new ArrayDeque<>();
-    static Deque<Character> temp = new ArrayDeque<>();
     static char[] origin;
     static char[] target;
+    static char[] stack = new char[1_000_001];
+    static int p = -1;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         origin = br.readLine().toCharArray();
         target = br.readLine().toCharArray();
 
         for (int i = 0; i < origin.length; i++) {
-            dq.offerLast(origin[i]);
+            stack[++p] = origin[i];
 
-            if (dq.size() < target.length) {
+            if (p + 1 < target.length) {
                 continue;
             }
 
             boolean isMatch = true;
             for (int j = target.length - 1; j >= 0; j--) {
-                char c = dq.pollLast();
+                char c = stack[p--];
                 if (target[j] != c) {
                     isMatch = false;
                 }
-                temp.offerLast(c);
             }
 
             if (!isMatch) {
-                while(!temp.isEmpty()) {
-                    dq.offerLast(temp.pollLast());
-                }
-            } else {
-                temp.clear();
+                p += target.length;
             }
         }
 
-        if (dq.isEmpty()) {
+        if (p == -1) {
             System.out.println("FRULA");
         } else {
             StringBuilder sb = new StringBuilder();
-            while (!dq.isEmpty()) {
-                sb.append(dq.pollFirst());
+
+            for (int i = 0; i <= p; i++) {
+                sb.append(stack[i]);
             }
+
             System.out.println(sb);
         }
     }
