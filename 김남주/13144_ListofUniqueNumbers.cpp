@@ -11,21 +11,22 @@ using namespace std;
 
 using ll = long long;
 int n;
-int v[100001];
-
+int val[100001];
+bool v[100001];
 int main() {
     fastio;
     // read_input;
     cin>>n;
-    int t;
-    ll x=0;
+    for (int i=0;i<n;i++)cin>>val[i];
     ll ans=0;
-    int start=0;
-    for (int i=1;i<=n;i++) {
-        cin>>t;
-        start=max(start,v[t]);
-        v[t]=i;
-        ans+=i-start;
+    int l=0,r=0;
+    while(r<n) {
+        if (v[val[r]]) {
+            while(l<r && val[l]!=val[r]) v[val[l++]]=false;
+            l++;
+        } 
+        v[val[r++]]=true;;
+        ans+=r-l;
     }
     cout<<ans;
 }
