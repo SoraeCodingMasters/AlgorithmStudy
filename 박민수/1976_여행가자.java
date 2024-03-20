@@ -7,7 +7,7 @@ import java.util.*;
 
 /***
  * 백준 1976번
- * 여행 가자
+ * 여행 가자 (Disjoint Set)
  * 2024-03-20
  * 시간 제한 : 2초
  * 메모리 제한 : 128MB
@@ -16,57 +16,68 @@ import java.util.*;
 public class Main {
     static int N; // 1 <= N <= 200
     static int M; // 1 <= M <= 1,000
-    static List<Integer>[] graph;
-    static boolean[] visited;
-    static Set<Integer> s = new HashSet<>();
-    static int start;
+    static int[] parent;
+    static int[] rank;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
         N = Integer.parseInt(br.readLine());
         M = Integer.parseInt(br.readLine());
 
-        graph = new List[N + 1];
+        parent = new int[N + 1];
         for (int i = 1; i <= N; i++) {
-            graph[i] = new ArrayList<>();
+            parent[i] = i;
         }
-        visited = new boolean[N + 1];
+
+        rank = new int[N + 1];
+        for (int i = 1; i <= N; i++) {
+            rank[i] = 1;
+        }
 
         for (int i = 1; i <= N; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 1; j <= i; j ++) {
                 if (Integer.parseInt(st.nextToken()) == 1) {
-                    graph[i].add(j);
-                    graph[j].add(i);
+                    union(i, j);
                 }
             }
         }
 
         st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < M; i++) {
-            start = Integer.parseInt(st.nextToken());
-            s.add(start);
+
+        boolean flag = false;
+        int prev = Integer.parseInt(st.nextToken());
+        for (int i = 1; i < M; i++) {
+            int cur = Integer.parseInt(st.nextToken());
+            if (find(prev) != find(cur)) {
+                flag = true;
+                break;
+            }
+            prev = cur;
         }
 
-        dfs(start);
+        if (flag) System.out.println("NO");
+        else System.out.println("YES");
 
-        if (s.isEmpty()) {
-            System.out.println("YES");
-        } else {
-            System.out.println("NO");
-        }
+    }
+    public static int find(int x) {
+        if (parent[x] == x) return x;
+
+        return parent[x] = find(parent[x]);
     }
 
-    public static void dfs (int start) {
-        visited[start] = true;
-        s.remove(start);
+    public static void union(int x, int y) {
+        int a = find(x);
+        int b = find(y);
 
-        for (int i = 0; i < graph[start].size(); i++) {
-            int n = graph[start].get(i);
+        if (a == b) return;
 
-            if (!visited[n]) {
-                dfs(n);
-            }
+        if (rank[a] < rank[b]) {
+            parent[a] = b;
+            rank[b] += rank[a];
+        } else {
+            parent[b] = a;
+            rank[a] += rank[b];
         }
     }
 }
