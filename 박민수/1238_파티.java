@@ -13,11 +13,9 @@ import java.util.*;
  * 메모리 제한 : 128MB
  */
 
-public class Main {
+public class Main_Dijkstra {
     static int N, M, X; // 1 <= N <= 1,000 / 1 <= M <= 10,000 / 1 <= X <= N
     static int s, e, v;
-    static List<Node>[] graph;
-    static int[][] dist;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -26,9 +24,11 @@ public class Main {
         M = Integer.parseInt(st.nextToken());
         X = Integer.parseInt(st.nextToken());
 
-        graph = new List[N + 1];
+        List<SoraeCodingMasters.A.BOJ1238.Main_Dijkstra.Node>[] originGraph = new List[N + 1];
+        List<SoraeCodingMasters.A.BOJ1238.Main_Dijkstra.Node>[] reverseGraph = new List[N + 1];
         for (int i = 1; i <= N; i++) {
-            graph[i] = new ArrayList<>();
+            originGraph[i] = new ArrayList<>();
+            reverseGraph[i] = new ArrayList<>();
         }
 
         for (int i = 0; i < M; i++) {
@@ -36,45 +36,43 @@ public class Main {
             s = Integer.parseInt(st.nextToken());
             e = Integer.parseInt(st.nextToken());
             v = Integer.parseInt(st.nextToken());
-            graph[s].add(new Node(e, v));
+            originGraph[s].add(new SoraeCodingMasters.A.BOJ1238.Main_Dijkstra.Node(e, v));
+            reverseGraph[e].add(new SoraeCodingMasters.A.BOJ1238.Main_Dijkstra.Node(s, v));
         }
 
-        dist = new int[N + 1][N + 1];
-        for (int i = 1; i <= N; i++) {
-            Arrays.fill(dist[i], Integer.MAX_VALUE);
-        }
-
-        for (int i = 1; i <= N; i++) {
-            dijkstra(i);
-        }
+        int[] originDist = dijkstra(originGraph);
+        int[] reverseDist = dijkstra(reverseGraph);
 
         int ans = Integer.MIN_VALUE;
         for (int i = 1; i <= N; i++) {
-            ans = Math.max(ans, dist[i][X] + dist[X][i]);
+            ans = Math.max(ans, originDist[i] + reverseDist[i]);
         }
 
         System.out.println(ans);
     }
-    public static void dijkstra(int start) {
-        PriorityQueue<Node> pq = new PriorityQueue<>();
-        dist[start][start] = 0;
-        pq.add(new Node(start, 0));
+    public static int[] dijkstra(List<SoraeCodingMasters.A.BOJ1238.Main_Dijkstra.Node>[] graph) {
+        int[] dist = new int[N + 1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        PriorityQueue<SoraeCodingMasters.A.BOJ1238.Main_Dijkstra.Node> pq = new PriorityQueue<>();
+        dist[X] = 0;
+        pq.add(new SoraeCodingMasters.A.BOJ1238.Main_Dijkstra.Node(X, 0));
 
         while(!pq.isEmpty()) {
-            Node n = pq.poll();
+            SoraeCodingMasters.A.BOJ1238.Main_Dijkstra.Node n = pq.poll();
 
-            if (dist[start][n.e] < n.v) continue;
+            if (dist[n.e] < n.v) continue;
 
-            for (int i = 0; i < graph[n.e].size(); i++) {
-                Node next = graph[n.e].get(i);
-                if (dist[start][n.e] + next.v < dist[start][next.e]) {
-                    dist[start][next.e] = dist[start][n.e] + next.v;
-                    pq.add(new Node(next.e, dist[start][next.e]));
+            for (SoraeCodingMasters.A.BOJ1238.Main_Dijkstra.Node next : graph[n.e]) {
+                if (dist[n.e] + next.v < dist[next.e]) {
+                    dist[next.e] = dist[n.e] + next.v;
+                    pq.add(new SoraeCodingMasters.A.BOJ1238.Main_Dijkstra.Node(next.e, dist[next.e]));
                 }
             }
         }
+        return dist;
     }
-    public static class Node implements Comparable<Node> {
+
+    public static class Node implements Comparable<SoraeCodingMasters.A.BOJ1238.Main_Dijkstra.Node> {
         int e;
         int v;
 
@@ -84,7 +82,7 @@ public class Main {
         }
 
         @Override
-        public int compareTo(Node o) {
+        public int compareTo(SoraeCodingMasters.A.BOJ1238.Main_Dijkstra.Node o) {
             return this.v - o.v;
         }
     }
